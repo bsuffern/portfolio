@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
+import profilePic from '@/images/japan_trip.jpg'
 import { IconLink } from '@/components/IconLink'
 
 function GitHubIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -21,6 +23,7 @@ function LinkedinIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 export function Intro() {
   return (
     <>
+      <Image className="mt-auto content-center rounded-full mb-6" alt="" src={profilePic} width={246} height={246}/>
       <h1 className="mt-auto font-display text-4xl/tight font-light text-white">
         Broden {' '}
         <span className="text-sky-300">Suffern</span>
