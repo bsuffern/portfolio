@@ -35,7 +35,7 @@ export function Intro() {
         <IconLink href="https://github.com/bsuffern" icon={GitHubIcon} className="flex-none">
           GitHub
         </IconLink>
-        <IconLink href="https://www.linkedin.com/in/broden-suffern-680b681aa/" icon={LinkedinIcon} className="flex-none">
+        <IconLink href="https://www.linkedin.com/in/bsuffern" icon={LinkedinIcon} className="flex-none">
           LinkedIn
         </IconLink>
       </div>
