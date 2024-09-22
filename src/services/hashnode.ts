@@ -11,7 +11,6 @@ const hashnodePosts = gql`
                 updatedAt
                 content {
                     markdown
-                    html
                 }
                 publishedAt
                 coverImage {
@@ -41,8 +40,7 @@ export type Post = {
     title: string,
     updatedAt: string | null,
     content: {
-        markdown: string,
-        html: string
+        markdown: string
     },
     publishedAt: string,
     coverImage: {

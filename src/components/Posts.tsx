@@ -3,10 +3,8 @@
 import { fetchPosts } from "@/services/hashnode";
 import { useQuery } from "@tanstack/react-query";
 import ReactMarkdown from 'react-markdown';
-import { FormattedDate } from "./FormattedDate";
-import { Post } from "@/services/hashnode";
-import { img } from "./mdx";
-import Image from "next/image";
+import Img from "./Img";
+import remarkGfm from "remark-gfm";
 
 export default function Posts() {
     const { isPending, isError, data, error } = useQuery({
@@ -43,12 +41,17 @@ export default function Posts() {
         <div>
             {data?.map((post) => (
                 <div key={post.id}>
-                    <img alt={`cover image for ${post.title}`} src={post.coverImage.url}/>
+                    <Img alt={`cover image for ${post.title}`} src={post.coverImage.url} width={1200} height={800}/>
                     <h2>{post.title}</h2>
-                    <div dangerouslySetInnerHTML={{
-                        __html: post.content.html
-                    }}>
-                    </div>
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                            img: (props) => (
+                                <Img src={props.src!} alt={props.alt!} width={1200} height={800}></Img>
+                            )
+                        }}>
+                        {post.content.markdown.replaceAll(' align="center"', '')}
+                    </ReactMarkdown>
                 </div>
             ))}
         </div>
