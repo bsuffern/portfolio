@@ -42,7 +42,7 @@ export default function Posts() {
     return(
         <div>
             {data?.map((post) => (
-                <div>
+                <div key={post.id}>
                     <img alt={`cover image for ${post.title}`} src={post.coverImage.url}/>
                     <h2>{post.title}</h2>
                     <div dangerouslySetInnerHTML={{
