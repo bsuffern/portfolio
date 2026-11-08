@@ -1,0 +1,27 @@
+---
+layout: layouts/base.njk
+---
+<section class="hero" aria-label="Intro">
+  <div class="centerpiece" data-centerpiece role="img" aria-label="A field of dots that follows your pointer">
+    <canvas></canvas>
+  </div>
+  <h1 class="hero-name">{{ site.name }}</h1>
+  <p class="lede">I build software. This is where I keep what I make, what I write, and the work that inspires me.</p>
+</section>
+
+<section class="section">
+  <h2 class="section-title"><a href="/projects/">Projects</a></h2>
+  {% set items = projects | head(3) %}
+  {% include "partials/project-list.njk" %}
+</section>
+
+<section class="section">
+  <h2 class="section-title"><a href="/writing/">Writing</a></h2>
+  {% set items = collections.posts | head(3) %}{% set showDesc = false %}
+  {% include "partials/post-list.njk" %}
+</section>
+
+<section class="section">
+  <h2 class="section-title"><a href="/inspiration/">Inspiration</a></h2>
+  <p class="muted">Books, music, photographs and games that shaped how I think and make things.</p>
+</section>

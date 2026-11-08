@@ -1,0 +1,45 @@
+---
+layout: layouts/base.njk
+title: Inspiration
+description: Books, music, photographs and games that inspire me.
+---
+<h1 class="page-title">Inspiration</h1>
+<p class="lede">Books, music, photographs and games that shaped how I think and make things.</p>
+
+{%- set groups = [
+  { key: "books", label: "Books" },
+  { key: "music", label: "Music" },
+  { key: "photographs", label: "Photographs" },
+  { key: "games", label: "Games" }
+] %}
+{%- for g in groups %}
+<section class="section" id="{{ g.key }}">
+  <h2 class="section-title">{{ g.label }}</h2>
+  {%- set list = inspiration[g.key] %}
+  {%- if g.key == "music" and playlist.length %}
+  <p class="muted">On the player right now:</p>
+  <ul class="tracks">
+    {%- for t in playlist %}
+    <li><button type="button" data-play-track="{{ t.track }}">
+      <img eleventy:ignore src="{{ t.art }}" alt="" width="48" height="48" loading="lazy">
+      <span><span class="t">{{ t.title }}</span><span class="a">{{ t.artist }}</span></span>
+    </button></li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+  {%- if list.length %}
+  <ul class="shelf">
+    {%- for item in list %}
+    <li class="shelf-item">
+      {%- if item.image %}<img src="{{ item.image }}" alt="" loading="lazy">{% endif %}
+      <span class="row-title">{% if item.href %}<a href="{{ item.href }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</span>
+      <span class="row-desc">{{ item.by }}{% if item.year %}, {{ item.year }}{% endif %}</span>
+      {%- if item.note %}<span class="shelf-note">{{ item.note }}</span>{% endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+  {%- elif g.key != "music" or not playlist.length %}
+  <p class="muted">Nothing here yet.</p>
+  {%- endif %}
+</section>
+{%- endfor %}

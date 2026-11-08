@@ -1,0 +1,9 @@
+---
+layout: layouts/base.njk
+title: Writing
+eleventyExcludeFromCollections: true
+---
+<h1 class="page-title">Writing</h1>
+<p class="lede">Notes on things I've built and learned. <a href="/writing/feed.xml">RSS</a></p>
+{% set items = collections.posts %}{% set showDesc = true %}
+{% include "partials/post-list.njk" %}

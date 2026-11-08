@@ -1,0 +1,11 @@
+<ul class="rows">
+  {%- for post in items %}
+  <li class="row">
+    <a class="row-main row-link" href="{{ post.url }}">
+      <span class="row-title">{{ post.data.title }}</span>
+      {%- if showDesc %}<span class="row-desc">{{ post.data.description }}</span>{% endif %}
+    </a>
+    <time class="row-date" datetime="{{ post.date | isoDate }}">{{ post.date | year }}</time>
+  </li>
+  {%- endfor %}
+</ul>

@@ -1,0 +1,26 @@
+{%- if playlist.length %}
+<aside class="player" id="player" aria-label="Music player">
+  <script type="application/json" id="playlist-data">{{ playlist | dump | safe }}</script>
+  <div class="player-list" id="player-list" hidden>
+    <p class="player-list-title">Playlist <span>{{ playlist.length }} tracks, shuffled</span></p>
+    <ol>
+      {%- for t in playlist %}
+      <li><button type="button" data-play-track="{{ t.track }}">
+        <img eleventy:ignore src="{{ t.art }}" alt="" width="36" height="36" loading="lazy">
+        <span><span class="t">{{ t.title }}</span><span class="a">{{ t.artist }}</span></span>
+      </button></li>
+      {%- endfor %}
+    </ol>
+  </div>
+  <div class="player-bar">
+    <div class="player-embed" id="player-embed"></div>
+    <p class="player-meta" aria-live="polite"><a id="player-title" href="#" target="_blank" rel="noopener"></a><span id="player-artist"></span></p>
+    <button type="button" class="icon-btn" id="player-next" aria-label="Shuffle to another track" title="Shuffle">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h3.5c1.6 0 2.6.7 3.5 2l1 1.5M3 14h3.5c1.6 0 2.6-.7 3.5-2l1-1.5c.9-1.3 1.9-2 3.5-2H17m0 0-2.5-2.5M17 8.5 14.5 11M11 11.5c.9 1.3 1.9 2 3.5 2H17m0 0-2.5-2.5m2.5 2.5L14.5 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button type="button" class="icon-btn" id="player-toggle" aria-label="Show playlist" aria-expanded="false" aria-controls="player-list" title="Playlist">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h10M3 10h10M3 15h6m5-1.5V8l4-1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12.5" cy="14.5" r="1.75" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+</aside>
+{%- endif %}

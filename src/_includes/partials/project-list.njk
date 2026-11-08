@@ -1,0 +1,14 @@
+<ul class="rows">
+  {%- for p in items %}
+  <li class="row">
+    <div class="row-main">
+      <span class="row-title">{{ p.name }}</span>
+      <span class="row-desc">{{ p.description }}</span>
+      {%- if p.links.length %}
+      <span class="row-links">{% for l in p.links %}<a href="{{ l.href }}">{{ l.label }}</a>{% endfor %}</span>
+      {%- endif %}
+    </div>
+    <span class="row-date">{{ p.year }}</span>
+  </li>
+  {%- endfor %}
+</ul>

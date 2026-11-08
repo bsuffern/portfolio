@@ -1,0 +1,11 @@
+[
+  {
+    "name": "SignCast",
+    "year": 2024,
+    "description": "Encrypted, trustless content delivery for creators. ETHOnline 2024 finalist.",
+    "links": [
+      { "label": "Write-up", "href": "/writing/signcast/" },
+      { "label": "Code", "href": "https://github.com/EthGlobal2024SafeDocs/SafeDocs" }
+    ]
+  }
+]
