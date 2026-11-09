@@ -116,9 +116,44 @@ translated into pixel art to give it this sort of vibe. We need to lose the brig
 
 Dev note: this server's headless Chromium crashes on any `<select>` (no system fonts), so the panel uses buttons.
 
+## Woodblock prototype, 2026-11-09
+
+Broden: "Can we try some other styles closer to the woodblock that are separate from the pixel style we have? Layer it
+similarly to the Japanese paintings I liked. Focus on really solid color combinations."
+
+`/proto/woodblock/` (`src/proto/woodblock.njk`, `src/assets/js/proto/woodblock.js`, reuses `cafe-harness.js`).
+2D canvas at full resolution (no pixels).
+
+- **Built like a print:** every colour is a flat "block".
+  - Each block is printed slightly off-register with its own fixed offset.
+  - An ink key block draws the outlines.
+  - Sky, street, shoji light and lamplight are graded (bokashi).
+  - Paper fibre and horizontal woodgrain sit over everything.
+- **Composition:** inside the café, looking through a three-pane wooden window with a kumiko lattice strip.
+  - **Outside:** a row of shop fronts with glowing shoji, the café opposite with an awning, banners and swaying
+    lanterns.
+  - **Behind and above:** far rooftops and a watchtower, a telegraph pole with sagging wires.
+  - **The street:** wet and graded, with Yoshida-style broken vertical reflections. Hiroshige-style straight rain, and
+    someone crossing under an umbrella.
+  - **Inside:** a noren curtain with a crest, a paper lantern, an iron kettle, a cup, and a vase with a blossom branch
+    against the glass.
+- **One composition, four colour combinations** (picker, keys 1–4):
+
+| Palette | From | Colours |
+| --- | --- | --- |
+| Indigo night | Yoshida, *Kagurazaka after a night rain* | Prussian blue night, amber shoji light, vermilion |
+| Teal dusk | Hasui, *Evening at Ushibori* | teal water and roofs, peach sky, one warm light |
+| Moonlit gold | Grimshaw | olive-gold sky, umber walls, gold windows |
+| Diner green | Hopper, *Nighthawks* | deep teal night, cream-yellow light, brick-red shop fronts |
+
+- **Sliders:** ink key lines, off-register, paper & woodgrain, rain. Starting values 70%, 40%, 60%, 60%.
+- The scene is data-shaped (palette roles such as `skyTop`, `light`, `accent`, `ink` mapped onto shared shapes), which
+  is a first step toward composing scenes from layers with a tool.
+- **Status:** waiting for Broden's reaction.
+
 ## Next
 
-1. Tune the 3D prototype with Broden: shader settings, palette, what's in the scene.
+1. Get Broden's reaction to the woodblock palettes and the 3D shader version.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
 - Should scenes change with the time of day, or rotate?
 - What should the scene-building tool be: a data format for layers, a visual editor, or both?
