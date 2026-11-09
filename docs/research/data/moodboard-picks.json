@@ -1,0 +1,60 @@
+{
+ "love": [
+  "grimshaw-boar",
+  "grimshaw-quay",
+  "hasui-ushibori",
+  "hopper",
+  "yoshida"
+ ],
+ "maybe": [
+  "botany-manor",
+  "cloud-gardens",
+  "gardens-between",
+  "gris",
+  "hiroshige",
+  "inside",
+  "kind-words",
+  "kind-words-2",
+  "late-night-shop",
+  "necrobarista",
+  "night-in-the-woods",
+  "sable",
+  "season",
+  "spiritfarer",
+  "tiny-glade",
+  "toem",
+  "townscaper"
+ ],
+ "no": [
+  "behind-glass",
+  "behind-the-frame",
+  "bokeh-window",
+  "caillebotte",
+  "coffee-talk",
+  "dordogne",
+  "drizzle",
+  "firewatch",
+  "hammershoi",
+  "hassam",
+  "hasui-shinkawa",
+  "kentucky-route-zero",
+  "mutazione",
+  "old-mans-journey",
+  "paper-trail",
+  "seoul",
+  "space-unbound",
+  "spirit-city",
+  "unpacking",
+  "vangogh",
+  "venba",
+  "wanderstop"
+ ],
+ "unrated": [
+  "short-hike"
+ ],
+ "notes": {
+  "short-hike": "I really like this  maybe with a dagger on top of it? It is like 3d that is translated into pixel art to give it this sort of vibe. We need to lose the brightness and go for warmth"
+ },
+ "general_note": null,
+ "read_on": "2026-11-09"
+}

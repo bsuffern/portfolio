@@ -2,6 +2,17 @@
 
 Newest first. Each entry: what was decided, what was rejected, and why.
 
+## 2026-11-09: Japanese woodblock prints anchor the aesthetic
+
+- **Decided:** the scene style starts from Japanese prints (Hasui, Yoshida): flat layered colour, graded skies and
+  water, a small palette of night blues with warm lamplight. Grimshaw and Hopper add the motif of lit windows against
+  the dark.
+- **Rejected:** literal pixel art, photography, painted-3D game looks, saturated brushwork (Van Gogh), grey
+  daytime rain (Caillebotte, Hassam).
+- **Why:** the moodboard. All five Loves were paintings or prints; Broden: "I particularly love the Japanese paintings
+  for their style and use of colors, it makes for beautiful scenes." Details in `research/scene.md`.
+- **Still open:** viewpoint (outside looking in?) and rendering route (2D layered print or low-res 3D diorama).
+
 ## 2026-11-09: Find the aesthetic from references before building more scenes
 
 - **Decided:** stop iterating on prototypes and gather visual references (games, paintings, prints, photography)
