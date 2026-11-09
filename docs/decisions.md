@@ -2,6 +2,15 @@
 
 Newest first. Each entry: what was decided, what was rejected, and why.
 
+## 2026-11-09: Stop drawing scenes in code
+
+- **Rejected:** generating the scene art procedurally (canvas/SVG shapes), after the woodblock prototype.
+- **Why:** Broden: "The quality is not the greatest of this ... we need to think of something else to generate these
+  scenes."
+- **Kept:** the effects code (rain, reflections, light flicker, paper texture), the four palettes as colour references,
+  and the role-based palette idea.
+- **Next:** choose where the art comes from; see `research/scene.md`.
+
 ## 2026-11-09: Inside looking out; a 3D scene with a stylising shader on top
 
 - **Decided:** the viewer sits inside the café looking out, as in the original brief. Scenes are built as small 3D

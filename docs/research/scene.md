@@ -149,11 +149,29 @@ similarly to the Japanese paintings I liked. Focus on really solid color combina
 - **Sliders:** ink key lines, off-register, paper & woodgrain, rain. Starting values 70%, 40%, 60%, 60%.
 - The scene is data-shaped (palette roles such as `skyTop`, `light`, `accent`, `ink` mapped onto shared shapes), which
   is a first step toward composing scenes from layers with a tool.
-- **Status:** waiting for Broden's reaction.
+- **Status:** rejected on quality, 2026-11-09. Broden: "The quality is not the greatest of this. I think svg we will
+  struggle with, we need to think of something else to generate these scenes." (It's canvas, not SVG, but the point
+  stands: shapes drawn from code can't reach the richness of the prints.)
+
+## Approaches to generating the art (open, 2026-11-09)
+
+Lesson so far: drawing every shape in code (canvas or SVG) caps the quality well below the prints. Better: the art
+is made as images, and code only adds what moves.
+
+- **Painted plates plus code-animated layers.** Each scene is a stack of image layers (sky, far, street, interior
+  frame...). Code adds rain, flickering lights, rippling reflections, steam and passers-by, with the paper texture on top.
+  The "tool" becomes a composer: layer images plus a small JSON file for depth and effects.
+- **Where the plates come from:**
+  1. An image model (Midjourney, Flux, GPT-image, etc.) prompted for shin-hanga style, then split into layers and
+     cleaned up.
+  2. Broden paints them himself (e.g. Procreate with woodblock brushes).
+  3. Commissioning an illustrator.
+  4. Blender with a toon/print look, rendered to layers.
+- Public-domain prints (pre-1930 Yoshida, for example) could be test plates for the composer, but not the final scenes.
 
 ## Next
 
-1. Get Broden's reaction to the woodblock palettes and the 3D shader version.
+1. Broden picks where the art comes from.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
 - Should scenes change with the time of day, or rotate?
 - What should the scene-building tool be: a data format for layers, a visual editor, or both?
