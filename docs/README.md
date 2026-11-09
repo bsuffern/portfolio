@@ -7,3 +7,4 @@ Research and decisions behind the site. See `CLAUDE.md` for how these are kept.
   prototypes, moodboard and open questions.
 - [research/scene-references.md](research/scene-references.md): the 45 references on the moodboard, with sources
   (raw data in `research/data/moodboard-refs.json`; picks in `research/data/moodboard-picks.json`).
+- [research/scene-art-prompts.md](research/scene-art-prompts.md): image-model prompts and the layer spec for scene art.

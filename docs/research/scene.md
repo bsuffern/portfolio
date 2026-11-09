@@ -169,9 +169,14 @@ is made as images, and code only adds what moves.
   4. Blender with a toon/print look, rendered to layers.
 - Public-domain prints (pre-1930 Yoshida, for example) could be test plates for the composer, but not the final scenes.
 
+**Chosen 2026-11-09: an image model.** Broden runs the generator; prompts and the layer spec are in
+`scene-art-prompts.md`.
+
 ## Next
 
-1. Broden picks where the art comes from.
+1. Broden generates full-scene explorations (step 1 in `scene-art-prompts.md`) and shares the ones he likes.
+2. Pick the look, then generate clean outside and inside plates.
+3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
 - Should scenes change with the time of day, or rotate?
 - What should the scene-building tool be: a data format for layers, a visual editor, or both?

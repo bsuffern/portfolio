@@ -11,6 +11,13 @@ Newest first. Each entry: what was decided, what was rejected, and why.
   and the role-based palette idea.
 - **Next:** choose where the art comes from; see `research/scene.md`.
 
+## 2026-11-09: Scene art comes from an image model, animated by code
+
+- **Decided:** generate the scene art with an image model, as two still plates (outside street, inside window frame).
+  Code animates rain, lights, reflections, steam and passers-by between and over them.
+- **Rejected:** Broden painting the plates, commissioning an illustrator, rendering in Blender.
+- **Why:** the fastest way to explore many scenes at print quality. Broden chose it when given the four options.
+
 ## 2026-11-09: Inside looking out; a 3D scene with a stylising shader on top
 
 - **Decided:** the viewer sits inside the café looking out, as in the original brief. Scenes are built as small 3D
