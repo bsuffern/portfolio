@@ -172,9 +172,20 @@ is made as images, and code only adds what moves.
 **Chosen 2026-11-09: an image model.** Broden runs the generator; prompts and the layer spec are in
 `scene-art-prompts.md`.
 
+## Image-model round 1, 2026-11-09
+
+Generated on the server through Codex's image tool (see `scene-art-prompts.md`): the step-1 full-scene prompt with
+each of the four palette lines, one image each.
+- Files are in `~/work/scene-art/round1/` (indigo, teal, gold, green), outside the repo.
+- The gallery is at `/proto/art/`.
+- **First read:** a big jump in quality over every code-drawn prototype. All four follow the brief (noren, lantern,
+  kettle, cup, blossom vase, lattice strip, wet reflective street, café with a vermilion awning). Indigo has the
+  strongest woodblock texture. Sizes vary (1774×887 for most; gold came back closer to 3:2).
+- **Status:** waiting for Broden's picks.
+
 ## Next
 
-1. Broden generates full-scene explorations (step 1 in `scene-art-prompts.md`) and shares the ones he likes.
+1. Broden picks from round 1; iterate prompts on the favourite.
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
