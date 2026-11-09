@@ -76,6 +76,26 @@ Either of these works:
 
 Keep the prompt and settings for any image you like: they go in this file so the look can be reproduced.
 
+## Generating from the server with Codex (set up 2026-11-09)
+
+Claude can generate images directly. Codex CLI's built-in image tool runs on Broden's ChatGPT subscription; no API key
+is involved.
+
+- **Codex CLI:** installed per user (`~/.local/node/bin/codex`, v0.167.0). Signed in with
+  `codex login --device-auth`; Broden approved it on 2026-11-09. The token is in `~/.codex/auth.json`: never print
+  it. Undo with `codex logout` or in ChatGPT settings.
+- **`tools/scene-art/run-gen.sh <promptfile> <outdir> <name>`:** one image per call. Run it in a tmux window: a
+  generation takes a few minutes.
+- **`tools/scene-art/publish.sh`:** converts everything under `~/work/scene-art/round*/` to WebP and rebuilds the
+  gallery at `/proto/art/`. The gallery and its images are excluded from git via `.git/info/exclude`.
+- **Gotchas:**
+  - Close stdin (`< /dev/null`), or `codex exec` waits forever for "additional input".
+  - Codex's sandbox can't copy the image out, so the script copies it from `~/.codex/generated_images/<thread id>/`.
+  - Output came back at 1774×887 (2:1, not 16:10), and the model name isn't reported.
+  - Each call uses about 140k input tokens of Codex context on top of the image itself. Batch sensibly.
+- **Prompt files:** `tools/scene-art/prompt-*.txt` (indigo, teal, gold, green), the step-1 prompt with each palette
+  line.
+
 ## Kept prompts and seeds
 
 _(Add the prompts behind chosen images here.)_
