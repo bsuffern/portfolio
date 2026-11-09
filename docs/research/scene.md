@@ -64,7 +64,7 @@ flat games (Night in the Woods, Sable, INSIDE, GRIS, Spiritfarer), Kind Words 1 
 
 **A Short Hike** (unrated), Broden's note: "I really like this maybe with a dagger on top of it? It is like 3d that is
 translated into pixel art to give it this sort of vibe. We need to lose the brightness and go for warmth."
-("dagger" is probably "dither"; to confirm.)
+(He meant "shader", not "dagger": a shader on top of a 3D scene.)
 
 ### What the picks point to
 
@@ -83,16 +83,16 @@ translated into pixel art to give it this sort of vibe. We need to lose the brig
 - **Too much isn't liked:** Van Gogh's saturated brushwork and Hasui's near-black *Night at Shinkawa* were both
   rejected, so: rich colour, but restrained and readable.
 
+### Confirmed with Broden, 2026-11-09
+
+- **Viewpoint:** inside the café looking out ("I still want it to be inside looking out of a cafe"), even though most
+  Loves look in from outside.
+- **Rendering:** a 3D scene with a shader on top, as in his A Short Hike note.
+
 ## Next
 
-1. Confirm with Broden: viewpoint (outside looking in, as the picks suggest?) and the A Short Hike note.
-2. Prototype the rainy café as a woodblock-print scene.
-3. Then design how scenes are built layer by layer, and the tool for composing them.
-
-## Open questions
-
-- Outside looking in (as the Loves suggest), inside looking out (the original brief), or both across scenes?
-- Rendering route: 2D layered print (flat shapes, bokashi gradients, paper grain) or a small 3D diorama rendered
-  low-res and quantised to a print palette (the A Short Hike note)?
+1. Prototype the café as a low-poly 3D scene with a stylising post-process shader (low resolution, woodblock palette,
+   paper grain, ink lines), with its settings on sliders.
+2. Then design how scenes are built layer by layer, and the tool for composing them.
 - Should scenes change with the time of day, or rotate?
 - What should the scene-building tool be: a data format for layers, a visual editor, or both?

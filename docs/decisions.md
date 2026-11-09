@@ -2,6 +2,17 @@
 
 Newest first. Each entry: what was decided, what was rejected, and why.
 
+## 2026-11-09: Inside looking out; a 3D scene with a stylising shader on top
+
+- **Decided:** the viewer sits inside the café looking out, as in the original brief. Scenes are built as small 3D
+  scenes, and a post-process shader turns them into the look: A Short Hike's "3D translated into pixel art" route,
+  but warm and in woodblock-print colours.
+- **Rejected:** outside looking in (four of the five moodboard Loves are framed that way, but Broden: "I still want it
+  to be inside looking out of a cafe"); drawing scenes as flat 2D layers.
+- **Why:** Broden's note on A Short Hike: "It is like 3d that is translated into pixel art ... maybe with a shader on
+  top of it ... We need to lose the brightness and go for warmth." (The moodboard note said "dagger"; he meant
+  "shader".) Building scenes from 3D parts also suits composing them layer by layer with a tool later.
+
 ## 2026-11-09: Japanese woodblock prints anchor the aesthetic
 
 - **Decided:** the scene style starts from Japanese prints (Hasui, Yoshida): flat layered colour, graded skies and
