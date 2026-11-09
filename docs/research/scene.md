@@ -89,10 +89,36 @@ translated into pixel art to give it this sort of vibe. We need to lose the brig
   Loves look in from outside.
 - **Rendering:** a 3D scene with a shader on top, as in his A Short Hike note.
 
+## 3D prototype, 2026-11-09
+
+`/proto/cafe3d/` (`src/proto/cafe3d.njk`, `src/assets/js/proto/cafe3d.js`). three.js 0.170 from jsDelivr.
+
+- **Scene:** low-poly café interior with toon shading (three-band gradient):
+  - a table with a mug, steam and an open book;
+  - a pendant lamp and a plant on the sill;
+  - a window with mullions.
+- **Outside:**
+  - a dusk sky graded darker overhead, and fog for depth;
+  - two rows of buildings with lit windows;
+  - a café across the street with a vermilion awning;
+  - two street lamps, with warm reflections shimmering on the wet road;
+  - rain, and a person with a vermilion umbrella walking past.
+- **Shader on top:**
+  1. Renders the scene at 1/pixel-size resolution.
+  2. Snaps each pixel to the nearest of a 16-colour woodblock palette (OKLab distance), with an optional ordered dither between the two nearest.
+  3. Draws ink lines where depth jumps.
+  4. Adds paper grain and fibres at screen resolution, plus a slight vignette.
+- **Sliders:** pixel size, palette strength, dither, ink lines, paper grain, rain, lamp warmth, motion speed. "Copy
+  settings" copies the values as text.
+- **Starting values:** pixel 3px, palette 100%, dither 20%, ink 60%, grain 50%, rain 60%, warmth 1×.
+- Gentle camera drift, and a lean toward the mouse on desktop.
+- **Status:** waiting for Broden's reaction and settings.
+
+Dev note: this server's headless Chromium crashes on any `<select>` (no system fonts), so the panel uses buttons.
+
 ## Next
 
-1. Prototype the café as a low-poly 3D scene with a stylising post-process shader (low resolution, woodblock palette,
-   paper grain, ink lines), with its settings on sliders.
+1. Tune the 3D prototype with Broden: shader settings, palette, what's in the scene.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
 - Should scenes change with the time of day, or rotate?
 - What should the scene-building tool be: a data format for layers, a visual editor, or both?
