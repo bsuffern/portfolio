@@ -181,11 +181,27 @@ each of the four palette lines, one image each.
 - **First read:** a big jump in quality over every code-drawn prototype. All four follow the brief (noren, lantern,
   kettle, cup, blossom vase, lattice strip, wet reflective street, café with a vermilion awning). Indigo has the
   strongest woodblock texture. Sizes vary (1774×887 for most; gold came back closer to 3:2).
-- **Status:** waiting for Broden's picks.
+- **Status:** rejected 2026-11-14. Broden: "I'm really not liking what we are coming up with ... we only have 1 shot.
+  We need something we can tweak." Codex is still signed in on the server; `codex logout` undoes it.
+
+## Pixel-art splats (from 2026-11-14)
+
+References:
+- https://x.com/samueltates/status/2120840967356059846 (lighthouse, well and mushroom dioramas; the scene scatters
+  into splats and flies home)
+- https://x.com/junglesilicon/status/2120452158961397975 (a reel of splat dioramas)
+
+Technique as described: little scenes written as code → baked to splats (points) → voxel-snapped → palette-snapped.
+Floating island dioramas on a dark background, chunky pixel look, rain as falling pixel streaks, warm glowing lamps.
+
+Why it fits: every part is tweakable (shapes, colours, density, grid size, palette, shader). It sits between the
+3D-plus-shader route Broden liked (A Short Hike note) and the diorama Maybes on the moodboard (Gardens Between,
+Townscaper, Tiny Glade). The scene file itself becomes the "tool" for composing scenes layer by layer.
 
 ## Next
 
-1. Broden picks from round 1; iterate prompts on the favourite.
+1. Prototype the café as a splat diorama with live dials (voxel size, splat size and shape, palette, dither, pixel
+   size), the four woodblock palettes, a "seat" view (inside looking out) and an orbiting diorama view.
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.

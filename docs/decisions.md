@@ -2,6 +2,18 @@
 
 Newest first. Each entry: what was decided, what was rejected, and why.
 
+## 2026-11-14: Try scenes written as code and baked to pixel-art splats
+
+- **Decided:** explore composing scenes in code from simple 3D shapes, sampled into coloured points ("splats"),
+  snapped to a voxel grid and a palette, with a shader on top. Everything can be tweaked with live dials.
+- **Rejected:** image-model art as the source of scenes. Broden: "I'm really not liking what we are coming up with ...
+  it most likely won't match and we only have 1 shot. We need something we can tweak."
+- **Inspiration:** two X posts (2026-11-11/12). @JungleSilicon: "fable 5.2 is *sooo* good at making pixel art gaussian
+  splats". @Samueltates: "little scenes written as code, baked to splats, voxel-snapped to a palette. the lighthouse
+  scatters into its splats and flies home." Both show small floating dioramas (lighthouse, mushroom, well, anchor)
+  in a pixel-art splat style.
+- **Model:** Broden mentioned Fable 5.2 being good at this; trying it on the current model first.
+
 ## 2026-11-09: Stop drawing scenes in code
 
 - **Rejected:** generating the scene art procedurally (canvas/SVG shapes), after the woodblock prototype.
