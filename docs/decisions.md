@@ -2,6 +2,14 @@
 
 Newest first. Each entry: what was decided, what was rejected, and why.
 
+## 2026-11-14: Park the splat café; build the real scene, a modern coffee shop
+
+- **Decided:** keep the splat café as a reference ("This is really nice ... keep this somewhere and park it"). It stays
+  at `/proto/splat/`, is tagged `proto-splat-cafe-v1`, and is listed on the `/proto/` index. Prototypes are now
+  left out of production builds (`eleventy.config.js`).
+- **Decided:** the scene for the site is a modern coffee shop, built with the same splat technique. Brief in
+  `research/scene.md` ("The coffee shop").
+
 ## 2026-11-14: Try scenes written as code and baked to pixel-art splats
 
 - **Decided:** explore composing scenes in code from simple 3D shapes, sampled into coloured points ("splats"),

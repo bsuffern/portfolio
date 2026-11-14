@@ -220,11 +220,27 @@ import map.
 - **Palettes:** the four from the woodblock prototype (keys 1–4).
 - **Sliders:** voxel snap 3cm, splat size 1.4×, square↔round 30%, palette snap 100%, dither 30%, pixel size 2px,
   lamp warmth 0.75×, rain 60%.
-- **Status:** waiting for Broden's reaction. Unknown yet: performance on a phone with about 260k points.
+- **Status:** liked and parked, 2026-11-14 ("This is really nice"). Tagged `proto-splat-cafe-v1`.
+
+## The coffee shop (the real scene, from 2026-11-14)
+
+Broden's brief, in his words: "a modern coffee shop where I am in a corner table and I can see the window from a few
+meters away and there is a bar stool section on the window and people coming and sitting there occasionally. The cafe
+is warmly lit and it contrasts with the coldness outside. Part of what I want is the animation of the scene with people
+occasionally walking into view, people going to sit down at the bar stools with coffees etc."
+
+What that means for the build:
+- **Viewpoint:** seated at a corner table, a few metres from a big modern window, looking at it on a diagonal.
+- **At the window:** a bar counter with stools.
+- **Light:** warm inside (pendants, wood), cold outside (blue-grey street, cool street lights, drizzle).
+- **People inside:** they come in carrying coffees, sit at free stools, sip, and later leave.
+- **People outside:** they walk past, some under umbrellas.
+- **Technique:** the same as the splat café (scene as code → splats → voxel and palette snap), plus animated people
+  built from splat body parts.
 
 ## Next
 
-1. Tune the splat café with Broden (look, density, what's in the scene); check it on his phone.
+1. Build `/proto/coffee/` and tune it with Broden.
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.

@@ -4,6 +4,9 @@ import site from "./src/_data/site.js";
 
 export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
+
+  // Scene prototypes are served by the dev server only; production builds leave them out.
+  if (process.env.ELEVENTY_RUN_MODE === "build") eleventyConfig.ignores.add("src/proto/**");
   eleventyConfig.addPassthroughCopy({
     "node_modules/swup/dist/Swup.umd.js": "assets/vendor/swup.js",
     "node_modules/@swup/head-plugin/dist/index.umd.js": "assets/vendor/swup-head.js",
