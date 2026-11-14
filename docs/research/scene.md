@@ -335,6 +335,15 @@ person with just coloured mesh and we can then do layering of clothing later."
     thickness, head size and shape, a slight posture (spine lean, head tilt; the animator adds it on top of every
     pose) and walking pace (±10%). The lab has a "Variety between people" slider (default 85%) and "New people" to
     reroll. Each slot keeps its own seed, so body sliders reshape everyone without reshuffling who is who.
+- **Feedback 2026-11-14:** "When I said long rectangular I meant in a generic face structure sense, can you give the
+  heads a little more character?"
+  - **Head shape:** sculpted from a subdivided box (4×6×3): a long face with a rounded crown and back of the skull, a
+    brow ridge, cheekbones, a jaw narrowing downward (`jaw`), a chin, and slight eye sockets.
+  - **Features:** a three-sided wedge nose, ears, small dark eyes, eyebrows in the hair colour set at an angle
+    (`browTilt` reads as expression), and a mouth line in a darker skin tone.
+  - **Varied per person:** nose, chin, brow, cheekbones, ears and brow angle.
+  - **Hair:** varied by style (crop, fringe, volume, short).
+  - **Lab:** sliders for the face features, plus a "Faces" close-up camera.
 - **Not yet:** clothing layers (later, by Broden's call). The café's `life.js` still uses the older `people.js` rig;
   it switches to `person.js` + `Animator` once the body is settled.
 

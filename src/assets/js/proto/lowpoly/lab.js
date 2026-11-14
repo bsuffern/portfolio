@@ -33,7 +33,7 @@ const SLOTS = [-1.6, -0.8, 0, 0.8, 1.6];
 const body = { ...BODY };
 let colors = PRESETS.map((c) => ({ ...c }));
 let people = [];
-const state = { base: "idle", arms: null, head: null, speed: 1, facing: "turn", variety: 0.85 };
+const state = { base: "idle", arms: null, head: null, speed: 1, facing: "turn", variety: 0.85, cam: "full" };
 // Each slot keeps its own random draws, so sliders reshape everyone without reshuffling who is who.
 let seeds = SLOTS.map(() => Math.random() * 1e9);
 const seeded = (s) => () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
@@ -72,17 +72,19 @@ const SLIDERS = [
   ["shoulderW", "Shoulder width", 0.28, 0.56, 0.01], ["waistW", "Waist width", 0.12, 0.42, 0.01], ["depth", "Torso depth", 0.3, 0.8, 0.02],
   ["armLen", "Arm length", 0.42, 0.72, 0.01], ["armR", "Arm thickness", 0.018, 0.05, 0.001],
   ["headH", "Head length", 0.18, 0.36, 0.005], ["headW", "Head width", 0.1, 0.2, 0.005], ["headD", "Head depth", 0.12, 0.22, 0.005], ["jaw", "Jaw taper", 0.6, 1, 0.01],
+  ["nose", "Nose", 0.4, 1.8, 0.05], ["chin", "Chin", 0, 1, 0.05], ["brow", "Brow", 0, 1, 0.05], ["cheek", "Cheekbones", 0, 1, 0.05], ["ears", "Ears", 0.5, 1.6, 0.05],
 ];
 const BASE = [["idle", "Stand"], ["walk", "Walk"], ["sitDownStool", "Sit down"], ["sitStool", "On stool"], ["standUpStool", "Stand up"], ["sitChair", "On chair"]];
 const ARMS = [[null, "None"], ["holdCup", "Hold cup"], ["sip", "Sip"], ["umbrella", "Umbrella"], ["type", "Type"], ["pocket", "Pockets"], ["wave", "Wave"]];
 const HEAD = [[null, "None"], ["lookAround", "Look around"], ["lookOutside", "Gaze"]];
 const FACING = [["front", "Front"], ["side", "Side"], ["turn", "Turn"]];
+const CAM = [["full", "Full body"], ["faces", "Faces"]];
 const body$ = document.getElementById("proto-panel-body");
 const seg = (group, items) => `<div class="pp-grid" role="group" aria-label="${group}">${items.map(([v, l]) => `<button type="button" data-${group}="${v ?? ""}">${l}</button>`).join("")}</div>`;
 body$.innerHTML =
   `<p class="pp-h">Body</p><div class="pp-row"><label for="pp-variety">Variety between people<output id="ppo-variety">85%</output></label><input type="range" id="pp-variety" min="0" max="1" step="0.05" value="0.85"></div>` + SLIDERS.map(([k, l, mn, mx, st]) => `<div class="pp-row"><label for="pp-${k}">${l}<output id="ppo-${k}">${body[k].toFixed(3)}</output></label><input type="range" id="pp-${k}" min="${mn}" max="${mx}" step="${st}" value="${body[k]}"></div>`).join("") +
   `<p class="pp-h">Body animation</p>${seg("base", BASE)}<p class="pp-h">Arms</p>${seg("arms", ARMS)}<p class="pp-h">Head</p>${seg("head", HEAD)}` +
-  `<p class="pp-h">View</p>${seg("facing", FACING)}` +
+  `<p class="pp-h">View</p>${seg("facing", FACING)}${seg("cam", CAM)}` +
   `<div class="pp-row"><label for="pp-speed">Speed<output id="ppo-speed">1.00×</output></label><input type="range" id="pp-speed" min="0.1" max="2" step="0.05" value="1"></div>` +
   `<div class="pp-grid pp-grid-2"><button type="button" class="pp-btn" id="pp-new">New people</button><button type="button" class="pp-btn" id="pp-colours">Shuffle colours</button></div><button type="button" class="pp-btn" id="pp-copy">Copy body</button>`;
 document.getElementById("pp-variety").addEventListener("input", (e) => { state.variety = parseFloat(e.target.value); document.getElementById("ppo-variety").textContent = Math.round(state.variety * 100) + "%"; rebuild(); });
@@ -91,7 +93,7 @@ for (const [k] of SLIDERS) {
   el.addEventListener("input", () => { body[k] = parseFloat(el.value); document.getElementById("ppo-" + k).textContent = body[k].toFixed(3); rebuild(); });
 }
 function mark() {
-  for (const g of ["base", "arms", "head", "facing"]) body$.querySelectorAll(`[data-${g}]`).forEach((b) => b.setAttribute("aria-pressed", String((b.dataset[g] || null) === state[g])));
+  for (const g of ["base", "arms", "head", "facing", "cam"]) body$.querySelectorAll(`[data-${g}]`).forEach((b) => b.setAttribute("aria-pressed", String((b.dataset[g] || null) === state[g])));
 }
 body$.addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b) return;
@@ -111,6 +113,12 @@ body$.addEventListener("click", (e) => {
     state.head = b.dataset.head || null;
     for (const p of people) state.head ? p.anim.play("head", state.head) : p.anim.stop("head");
   } else if (b.dataset.facing !== undefined) state.facing = b.dataset.facing;
+  else if (b.dataset.cam !== undefined) {
+    state.cam = b.dataset.cam;
+    if (state.cam === "faces") { controls.minDistance = 1; controls.target.set(0, 1.55, 0); camera.position.set(0.25, 1.62, 2.6); }
+    else { controls.minDistance = 2.5; controls.target.set(0, 0.85, 0); camera.position.set(0.6, 1.5, 6.2); }
+    controls.update();
+  }
   else if (b.id === "pp-new") { seeds = SLOTS.map(() => Math.random() * 1e9); colors = SLOTS.map(() => randomColors()); rebuild(); }
   else if (b.id === "pp-colours") { colors = SLOTS.map(() => randomColors()); people.forEach((p, i) => Object.entries(colors[i]).forEach(([slot, c]) => p.paint(slot, c))); }
   else if (b.id === "pp-copy") {
