@@ -2,6 +2,14 @@
 
 Newest first. Each entry: what was decided, what was rejected, and why.
 
+## 2026-11-14: The coffee shop in low poly, built in layers
+
+- **Decided:** keep the coffee-shop brief, but render it as low-poly 3D (flat-shaded, faceted geometry, real-time
+  lights) instead of splats. Organise it in layers, both in the scene (room, bar, furniture, props, cutaway, near and
+  far outside, people, cars, rain, glass, post-processing) and in the code (one module each).
+- **Rejected:** splats for this scene. Broden: "While I love the Gaussian splat style it's not the style I imagined.
+  What I imagine is the cafe scene I described but in low poly." The splat coffee shop stays at `/proto/coffee/`.
+
 ## 2026-11-14: Park the splat café; build the real scene, a modern coffee shop
 
 - **Decided:** keep the splat café as a reference ("This is really nice ... keep this somewhere and park it"). It stays
