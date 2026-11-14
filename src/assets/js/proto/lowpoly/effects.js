@@ -1,11 +1,11 @@
 // Effects layers: rain outside, drops running down the glass, steam from my cup, and the post-processing
-// stack (bloom → tone mapping → finishing pass with grain, vignette and optional pixelation).
+// stack: render → bloom → tone mapping → style pass (style.js), where the whole scene gets its look.
 import * as THREE from "three";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+import { createStylePass } from "./style.js";
 import { COLORS } from "./palette.js";
 import { rand } from "./build.js";
 import { WZ, MY_CUP } from "./layout.js";
@@ -76,33 +76,17 @@ export function createSteam(scene) {
   };
 }
 
-const FINISH = {
-  uniforms: { tDiffuse: { value: null }, uRes: { value: new THREE.Vector2(1, 1) }, uPixel: { value: 1 }, uGrain: { value: 0.05 }, uVignette: { value: 0.35 }, uTime: { value: 0 } },
-  vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-  fragmentShader: `
-    uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uPixel, uGrain, uVignette, uTime; varying vec2 vUv;
-    float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-    void main() {
-      vec2 uv = vUv;
-      if (uPixel > 1.0) { vec2 cell = uRes / uPixel; uv = (floor(uv * cell) + 0.5) / cell; }
-      vec3 c = texture2D(tDiffuse, uv).rgb;
-      c += (hash(gl_FragCoord.xy + fract(uTime) * 100.0) - 0.5) * uGrain;
-      vec2 v = vUv - 0.5; c *= 1.0 - dot(v, v) * uVignette * 2.0;
-      gl_FragColor = vec4(c, 1.0);
-    }`,
-};
-
 export function createPost(renderer, scene, camera) {
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.6, 0.55, 0.82);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
-  const finish = new ShaderPass(FINISH);
-  composer.addPass(finish);
+  const style = createStylePass();
+  composer.addPass(style.pass);
   return {
-    composer, bloom, finish,
-    setSize(w, h, dpr) { composer.setPixelRatio(dpr); composer.setSize(w, h); finish.uniforms.uRes.value.set(w * dpr, h * dpr); },
-    render(t) { finish.uniforms.uTime.value = t; composer.render(); },
+    composer, bloom, style,
+    setSize(w, h, dpr) { composer.setPixelRatio(dpr); composer.setSize(w, h); style.setSize(w * dpr, h * dpr); },
+    render(t) { style.tick(t); composer.render(); },
   };
 }

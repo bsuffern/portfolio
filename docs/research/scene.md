@@ -348,10 +348,39 @@ person with just coloured mesh and we can then do layering of clothing later."
 - **Not yet:** clothing layers (later, by Broden's call). The café's `life.js` still uses the older `people.js` rig;
   it switches to `person.js` + `Animator` once the body is settled.
 
+- **Body settled, 2026-11-14.** Broden's tuned values are now `BODY` in `person.js`:
+  `{"legLen":0.98,"legR":0.042,"torsoH":0.48,"shoulderW":0.46,"waistW":0.18,"depth":0.48,"armLen":0.54,"armR":0.03,"headH":0.27,"headW":0.125,"headD":0.14,"jaw":0.85,"crown":0.45,"skull":0.1,"forehead":0.3,"chin":0.1}`.
+  `VARIETY` is 0.85.
+- **The café uses it.** `life.js` builds everyone with `createPerson(randomColors(), varyBody())` plus an `Animator`.
+  - **Customers:** walk in holding a cup (`walk` + `holdCup`), then `sitDownStool → sitStool`, then gaze out
+    (`lookOutside`). They sip every 6–15 s (`sip → holdCup`). To leave: `standUpStool`, then `walk`.
+  - **Walkers:** `walk` + `umbrella` (60%) or `pocket`.
+  - **Laptop person:** `sitChair` + `type`.
+  - **Pace:** root motion follows each person's pace, so feet and travel stay in step.
+  - `people.js` now only provides cars.
+
+## Look: a stylising shader on top (from 2026-11-14)
+
+Broden: "One thing I want to make sure we can do later is throw a shader on top that will stylise the scene. The feel
+that I am going for is the hotline Miami cutscenes."
+
+- **Reference, mood only (no copying of the game's characters, masks or assets):** saturated 80s neon (magenta, hot
+  pink, cyan, sodium yellow over deep purple), chunky low resolution, a VHS/CRT feel (scanlines, colour fringing,
+  grain) and a slow, woozy wave in the image.
+- **The hook:** the post stack is render → bloom → tone mapping → **style pass** (`lowpoly/style.js`). The style pass
+  is one shader whose numbers make a style.
+  - **Effects in the shader:** pixel size, wave, chromatic aberration, saturation, a four-colour gradient map with mix,
+    posterise, scanlines, grain, vignette.
+  - **API:** `STYLES` holds named styles; `set(name, amount)` blends from `none` to a style, so each can be faded in
+    and tuned on sliders. New effects go in as a uniform with a do-nothing `none` value.
+- **First sketch:** `neonVHS` (pixel 3, wave 1, aberration 1, saturation 1.5, map #12062a → #5a1a7a → #ff2f8f →
+  #ffd36b at 55%, posterise 7, scanlines 0.6). The café panel has "No style / Neon VHS" and "Style amount". It
+  proves the hook; it isn't tuned.
+
 ## Next
 
-1. Broden tunes the body in the character lab.
-2. Switch the café to the shared person model and animator.
+1. Broden's reaction to the café with the new people.
+2. Tune the style toward the Hotline Miami cutscene feel (later, when Broden is ready).
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.

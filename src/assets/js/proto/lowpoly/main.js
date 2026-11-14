@@ -12,7 +12,7 @@ const stage = document.querySelector("[data-proto-stage]");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // ---------- Settings ----------
-const S = { view: "seat", warmth: 1, cold: 1, rain: 0.7, busy: 1, speed: 1, bloom: 0.6, fog: 1, pixel: 1, grain: 0.05, shadows: true };
+const S = { view: "seat", warmth: 1, cold: 1, rain: 0.7, busy: 1, speed: 1, bloom: 0.6, fog: 1, pixel: 1, grain: 0.05, shadows: true, style: "none", styleAmount: 1 };
 const pct = (v) => Math.round(v * 100) + "%", x = (v) => v.toFixed(2) + "×";
 const CONTROLS = [
   { key: "warmth", label: "Warmth inside", min: 0.2, max: 2, step: 0.05, fmt: x },
@@ -24,6 +24,7 @@ const CONTROLS = [
   { key: "fog", label: "Fog outside", min: 0, max: 2, step: 0.05, fmt: x },
   { key: "pixel", label: "Pixel size", min: 1, max: 6, step: 1, fmt: (v) => (v === 1 ? "off" : v + "px") },
   { key: "grain", label: "Grain", min: 0, max: 0.2, step: 0.01, fmt: (v) => v.toFixed(2) },
+  { key: "styleAmount", label: "Style amount", min: 0, max: 1, step: 0.05, fmt: pct },
 ];
 
 // ---------- Renderer, scene, camera ----------
@@ -73,16 +74,18 @@ function setView(v) {
 const body = document.getElementById("proto-panel-body");
 body.innerHTML = `<div class="pp-seg" role="group" aria-label="View"><button type="button" data-view="seat">Corner table</button><button type="button" data-view="diorama">Diorama</button></div>` +
   CONTROLS.map((c) => `<div class="pp-row"><label for="pp-${c.key}">${c.label}<output id="ppo-${c.key}">${c.fmt(S[c.key])}</output></label><input type="range" id="pp-${c.key}" min="${c.min}" max="${c.max}" step="${c.step}" value="${S[c.key]}"></div>`).join("") +
-  `<div class="pp-seg" role="group" aria-label="Shadows"><button type="button" data-shadows="on">Shadows on</button><button type="button" data-shadows="off">Shadows off</button></div>
+  `<div class="pp-seg" role="group" aria-label="Style"><button type="button" data-style="none">No style</button><button type="button" data-style="neonVHS">Neon VHS</button></div>
+   <div class="pp-seg" role="group" aria-label="Shadows"><button type="button" data-shadows="on">Shadows on</button><button type="button" data-shadows="off">Shadows off</button></div>
    <button type="button" class="pp-btn" id="pp-copy">Copy settings</button>`;
 body.querySelectorAll("[data-view]").forEach((el) => el.addEventListener("click", () => setView(el.dataset.view)));
 body.querySelectorAll("[data-shadows]").forEach((el) => el.addEventListener("click", () => { S.shadows = el.dataset.shadows === "on"; apply(); }));
+body.querySelectorAll("[data-style]").forEach((el) => el.addEventListener("click", () => { S.style = el.dataset.style; apply(); }));
 for (const c of CONTROLS) {
   const el = document.getElementById("pp-" + c.key);
   el.addEventListener("input", () => { S[c.key] = parseFloat(el.value); document.getElementById("ppo-" + c.key).textContent = c.fmt(S[c.key]); apply(); });
 }
 document.getElementById("pp-copy").addEventListener("click", async (e) => {
-  const text = `view: ${S.view} · shadows: ${S.shadows ? "on" : "off"} · ` + CONTROLS.map((c) => `${c.label.toLowerCase()}: ${c.fmt(S[c.key])}`).join(" · ");
+  const text = `view: ${S.view} · style: ${S.style} · shadows: ${S.shadows ? "on" : "off"} · ` + CONTROLS.map((c) => `${c.label.toLowerCase()}: ${c.fmt(S[c.key])}`).join(" · ");
   try { await navigator.clipboard.writeText(text); e.target.textContent = "Copied"; } catch { e.target.textContent = "See console"; console.log(text); }
   setTimeout(() => (e.target.textContent = "Copy settings"), 1500);
 });
@@ -97,7 +100,8 @@ function apply() {
   rain.amount = S.rain; glass.amount = S.rain;
   post.bloom.strength = S.bloom;
   fog.near = 7.5; fog.far = S.fog > 0 ? 12 + 44 / S.fog : 1e6;
-  post.finish.uniforms.uPixel.value = S.pixel * dpr; post.finish.uniforms.uGrain.value = S.grain;
+  post.style.set(S.style, S.styleAmount, { pixel: S.pixel, grain: S.grain, dpr });
+  body.querySelectorAll("[data-style]").forEach((el) => el.setAttribute("aria-pressed", String(el.dataset.style === S.style)));
 }
 function resize() {
   const r = stage.getBoundingClientRect(); if (!r.width) return;

@@ -11,29 +11,31 @@
 import * as THREE from "three";
 import { rand, pick } from "./build.js";
 
+// Tuned by Broden in the character lab, 2026-11-14 (with variety 0.85).
 export const BODY = {
   legLen: 0.98,     // hip height when standing
   legR: 0.042,      // leg thickness
-  torsoH: 0.52,
-  shoulderW: 0.42,  // across the shoulders
-  waistW: 0.24,     // across the waist
-  depth: 0.5,       // torso depth relative to its width
-  armLen: 0.58,
-  armR: 0.032,
-  headW: 0.15,      // the head is a long rectangle: width,
+  torsoH: 0.48,
+  shoulderW: 0.46,  // across the shoulders
+  waistW: 0.18,     // across the waist
+  depth: 0.48,       // torso depth relative to its width
+  armLen: 0.54,
+  armR: 0.03,
+  headW: 0.125,      // the head is a long rectangle: width,
   headH: 0.27,      // height,
-  headD: 0.17,      // depth,
+  headD: 0.14,      // depth,
   jaw: 0.85,        // jaw width relative to the temples: <1 narrows to the chin, >1 widens (pear)
   crown: 0.45,      // 0 = flat top, 1 = domed
-  skull: 0.35,      // how far the back of the skull extends
+  skull: 0.1,      // how far the back of the skull extends
   forehead: 0.3,    // how much the forehead slopes back
-  chin: 0.3,        // how far the chin comes forward
+  chin: 0.1,        // how far the chin comes forward
   hair: "crop",     // crop | volume | short | none
 };
 
 // Every person shares the style but gets their own body: taller or shorter, broader or slighter, a longer or wider
 // head, and a slight posture of their own. amount 0 = all identical, 1 = full variety.
-export function varyBody(base = BODY, amount = 0.6, r = rand) {
+export const VARIETY = 0.85;
+export function varyBody(base = BODY, amount = VARIETY, r = rand) {
   const v = (spread) => 1 + (r() * 2 - 1) * spread * amount;
   const height = v(0.12), build = v(0.22);
   return {
