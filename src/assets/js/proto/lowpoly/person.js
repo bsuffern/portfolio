@@ -23,9 +23,12 @@ export const BODY = {
   headW: 0.15,      // the head is a long rectangle: width,
   headH: 0.27,      // height,
   headD: 0.17,      // depth,
-  jaw: 0.82,        // jaw width as a fraction of the cheeks
-  // Face: each 0..1-ish, varied per person.
-  nose: 1, chin: 0.5, brow: 0.5, cheek: 0.5, ears: 1, browTilt: 0, hair: "crop",
+  jaw: 0.85,        // jaw width relative to the temples: <1 narrows to the chin, >1 widens (pear)
+  crown: 0.45,      // 0 = flat top, 1 = domed
+  skull: 0.35,      // how far the back of the skull extends
+  forehead: 0.3,    // how much the forehead slopes back
+  chin: 0.3,        // how far the chin comes forward
+  hair: "crop",     // crop | volume | short | none
 };
 
 // Every person shares the style but gets their own body: taller or shorter, broader or slighter, a longer or wider
@@ -38,10 +41,8 @@ export function varyBody(base = BODY, amount = 0.6, r = rand) {
     legLen: base.legLen * height * v(0.03), torsoH: base.torsoH * height * v(0.05), armLen: base.armLen * height * v(0.03),
     shoulderW: base.shoulderW * build * v(0.06), waistW: base.waistW * build * v(0.2), depth: base.depth * v(0.12),
     legR: base.legR * build * v(0.15), armR: base.armR * build * v(0.12),
-    headW: base.headW * v(0.12), headH: base.headH * v(0.15), headD: base.headD * v(0.08), jaw: Math.min(1, base.jaw * v(0.1)),
-    nose: base.nose * v(0.35), chin: clamp01(base.chin + (r() - 0.5) * amount), brow: clamp01(base.brow + (r() - 0.5) * amount),
-    cheek: clamp01(base.cheek + (r() - 0.5) * amount), ears: base.ears * v(0.25), browTilt: (r() - 0.5) * 0.5 * amount,
-    hair: amount > 0 ? ["crop", "crop", "fringe", "volume", "short"][Math.floor(r() * 5)] : base.hair,
+    ...headShape(base, amount, r),
+    hair: amount > 0 ? ["crop", "crop", "volume", "short", "none"][Math.floor(r() * 5)] : base.hair,
     posture: { spine: [(r() - 0.4) * 0.12 * amount, 0, (r() - 0.5) * 0.04 * amount], neck: [(r() - 0.5) * 0.18 * amount, 0, (r() - 0.5) * 0.08 * amount] },
     pace: v(0.1),
   };
@@ -50,8 +51,7 @@ export function varyBody(base = BODY, amount = 0.6, r = rand) {
 export function createPerson(colors = randomColors(), body = {}) {
   const B = { ...BODY, ...body }, C = colors;
   const mats = {};
-  const derived = { eyes: "#17110e", lips: new THREE.Color(C.skin).multiplyScalar(0.72) };
-  const mat = (slot) => (mats[slot] ||= new THREE.MeshStandardMaterial({ color: C[slot] ?? derived[slot], flatShading: true, roughness: 0.85 }));
+  const mat = (slot) => (mats[slot] ||= new THREE.MeshStandardMaterial({ color: C[slot], flatShading: true, roughness: 0.85 }));
   const add = (g, slot, parent, x = 0, y = 0, z = 0, scale) => {
     const m = new THREE.Mesh(g, mat(slot)); m.position.set(x, y, z); if (scale) m.scale.set(...scale);
     m.castShadow = m.receiveShadow = true; parent.add(m); return m;
@@ -72,7 +72,7 @@ export function createPerson(colors = randomColors(), body = {}) {
   joint("neck", J.spine, 0, B.torsoH, 0);
   add(limb(0.03, 0.034, 0.07), "skin", J.neck, 0, 0.07, 0);
   joint("head", J.neck, 0, 0.07, 0);
-  buildHead(add, J.head, B, C);
+  buildHead(add, J.head, B);
 
   const upper = B.armLen * 0.52, fore = B.armLen * 0.48;
   for (const side of ["L", "R"]) {
@@ -114,7 +114,7 @@ export function createPerson(colors = randomColors(), body = {}) {
   return {
     root, J, props, body: B, colors: C,
     show(name, on = true) { if (props[name]) props[name].visible = on; },
-    paint(slot, color) { C[slot] = color; mats[slot]?.color.set(color); if (slot === "skin") mats.lips?.color.set(color).multiplyScalar(0.72); },
+    paint(slot, color) { C[slot] = color; mats[slot]?.color.set(color); },
     dispose() { root.traverse((x) => { x.geometry?.dispose(); if (x.material && !Object.values(mats).includes(x.material)) x.material.dispose(); }); Object.values(mats).forEach((m) => m.dispose()); },
   };
 }
@@ -122,46 +122,55 @@ export function createPerson(colors = randomColors(), body = {}) {
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
 // ---------- Head ----------
-// A long face, sculpted from a subdivided box: rounded skull, brow ridge, cheekbones, tapering jaw, chin.
-// Features are separate low-poly pieces so they stay crisp: wedge nose, ears, eyes, brows, mouth.
-function buildHead(add, head, B, C) {
-  const w = B.headW, h = B.headH, d = B.headD, cy = h / 2 - 0.01;
-  const g = new THREE.BoxGeometry(w, h, d, 4, 6, 3), p = g.attributes.position;
+// Faceless on purpose: all the character is in the silhouette of the head. Head types blend into the base
+// proportions, then everything gets a little randomness.
+const HEAD_TYPES = {
+  oblong: { headH: 1.08, headW: 0.95, jaw: 0.9, crown: 0.45, skull: 0.3, forehead: 0.25, chin: 0.3 },
+  square: { headH: 0.92, headW: 1.12, jaw: 1.02, crown: 0.1, skull: 0.2, forehead: 0.1, chin: 0.45 },
+  egg: { headH: 1.02, headW: 0.98, jaw: 0.68, crown: 0.95, skull: 0.45, forehead: 0.35, chin: 0.15 },
+  pear: { headH: 0.97, headW: 0.95, jaw: 1.16, crown: 0.55, skull: 0.25, forehead: 0.45, chin: 0.25 },
+  wedge: { headH: 1.0, headW: 1.08, jaw: 0.62, crown: 0.25, skull: 0.3, forehead: 0.15, chin: 0.6 },
+  longSkull: { headH: 1.0, headW: 0.94, jaw: 0.85, crown: 0.6, skull: 0.95, forehead: 0.65, chin: 0.2 },
+};
+function headShape(base, amount, r) {
+  const t = Object.values(HEAD_TYPES)[Math.floor(r() * Object.keys(HEAD_TYPES).length)], j = (s) => (r() * 2 - 1) * s * amount;
+  const mix = (a, b) => a + (b - a) * amount;
+  return {
+    headH: base.headH * mix(1, t.headH) * (1 + j(0.05)), headW: base.headW * mix(1, t.headW) * (1 + j(0.05)), headD: base.headD * (1 + j(0.06)),
+    jaw: mix(base.jaw, t.jaw) + j(0.05), crown: clamp01(mix(base.crown, t.crown) + j(0.1)), skull: clamp01(mix(base.skull, t.skull) + j(0.1)),
+    forehead: clamp01(mix(base.forehead, t.forehead) + j(0.1)), chin: clamp01(mix(base.chin, t.chin) + j(0.1)),
+  };
+}
+// Shape a point given in head space (origin at the centre of the head).
+function sculpt(x, y, z, B) {
+  const u = x / (B.headW / 2), v = y / (B.headH / 2), s = z / (B.headD / 2);
+  if (v < 0) { const k = Math.min(1, -v * 1.2); x *= 1 + (B.jaw - 1) * k; z *= 1 + (B.jaw - 1) * 0.35 * k; }       // jaw
+  if (v > 0.3) { const k = ((v - 0.3) / 0.7) ** 2; x *= 1 - B.crown * 0.34 * k; z *= 1 - B.crown * 0.24 * k;        // crown
+    y -= B.crown * 0.08 * (B.headH / 2) * k * Math.min(1, u * u + s * s); }
+  if (s < 0 && v > -0.35) z -= B.skull * 0.05 * Math.min(1, (v + 0.35) / 1.0);                                     // back of the skull
+  if (s > 0 && v > 0.15) z -= B.forehead * 0.04 * ((v - 0.15) / 0.85);                                             // forehead slope
+  if (s > 0.4 && v < -0.55) z += B.chin * 0.022 * ((-v - 0.55) / 0.45);                                            // chin
+  if (s < 0 && v < -0.45) z *= 0.85;                                                                                // tuck under at the neck
+  return [x, y, z];
+}
+// Box → sculpted solid. ty/tz place the box in head space; scale grows it slightly (hair over skin).
+function sculpted(g, B, ty = 0, tz = 0, scale = 1) {
+  const p = g.attributes.position;
   for (let i = 0; i < p.count; i++) {
-    let x = p.getX(i), y = p.getY(i), z = p.getZ(i);
-    const u = x / (w / 2), v = y / (h / 2), s = z / (d / 2);
-    if (v < 0) x *= 1 + (B.jaw - 1) * Math.min(1, -v * 1.3);                                // jaw narrows downward
-    if (Math.abs(v) < 0.25 && Math.abs(u) > 0.9) x *= 1 + B.cheek * 0.07;                   // cheekbones
-    if (v > 0.6) { const k = (v - 0.6) / 0.4; x *= 1 - 0.16 * k; z *= 1 - 0.12 * k; }        // crown rounds off
-    if (s < -0.5) { x *= 1 - 0.1 * Math.abs(u) ** 2; y *= v > 0 ? 1.02 : 0.97; }            // back of the skull
-    if (s > 0.9 && v > 0.2 && v < 0.5) z += B.brow * 0.012;                                 // brow ridge
-    if (s > 0.9 && v < -0.75) z += (B.chin - 0.3) * 0.025;                                  // chin
-    if (s > 0.9 && v > -0.2 && v < 0.2 && Math.abs(u) > 0.3 && Math.abs(u) < 0.7) z -= 0.006; // eye sockets
-    if (s > 0.5 && Math.abs(u) > 0.9 && v < 0) z *= 0.9;                                    // face narrows at the sides
-    p.setXYZ(i, x, y, z);
+    const [x, y, z] = sculpt(p.getX(i) * scale, p.getY(i) * scale + ty, p.getZ(i) * scale + tz, B);
+    p.setXYZ(i, x, y - ty, z - tz);
   }
   g.computeVertexNormals();
-  add(g, "skin", head, 0, cy, 0.005);
-  const front = d / 2 + 0.005;
-  // Nose: a three-sided wedge pointing forward and a little down.
-  const nl = h * 0.25 * B.nose, nw = w * 0.13 * Math.sqrt(B.nose);
-  const nose = new THREE.ConeGeometry(nw, nl, 3, 1); nose.rotateX(Math.PI / 2 + 0.5); nose.rotateZ(Math.PI);
-  add(nose, "skin", head, 0, cy - h * 0.04, front + nl * 0.28);
-  // Ears.
-  for (const sx of [-1, 1]) add(new THREE.BoxGeometry(0.018, h * 0.2 * B.ears, d * 0.24), "skin", head, sx * (w / 2 * (1 + B.cheek * 0.05) + 0.004), cy + h * 0.02, -d * 0.05);
-  // Eyes and brows; the brow angle reads as expression.
-  for (const sx of [-1, 1]) {
-    add(new THREE.BoxGeometry(w * 0.16, h * 0.035, 0.008), "eyes", head, sx * w * 0.22, cy + h * 0.07, front - 0.004);
-    const brow = add(new THREE.BoxGeometry(w * 0.24, h * 0.032, 0.016), "hair", head, sx * w * 0.22, cy + h * 0.15, front + B.brow * 0.008);
-    brow.rotation.z = sx * B.browTilt;
-  }
-  add(new THREE.BoxGeometry(w * 0.32, h * 0.025, 0.008), "lips", head, 0, cy - h * 0.25, front - 0.002 + (B.chin - 0.3) * 0.01);
-  // Hair.
-  const style = B.hair;
-  if (style !== "short") add(new THREE.BoxGeometry(w * 0.98, h * (style === "volume" ? 0.3 : 0.17), d * 0.98), "hair", head, 0, h * (style === "volume" ? 0.98 : 0.93), -0.004);
-  else add(new THREE.BoxGeometry(w * 0.9, h * 0.06, d * 0.9), "hair", head, 0, h * 0.97, -0.004);
-  if (style !== "short") add(new THREE.BoxGeometry(w * 1.04, h * 0.6, d * 0.2), "hair", head, 0, h * 0.62, -d * 0.45);
-  if (style === "fringe") add(new THREE.BoxGeometry(w * 0.85, h * 0.12, d * 0.12), "hair", head, -w * 0.06, h * 0.84, d * 0.44);
+  return g;
+}
+function buildHead(add, head, B) {
+  const w = B.headW, h = B.headH, d = B.headD, cy = h / 2 - 0.01;
+  add(sculpted(new THREE.BoxGeometry(w, h, d, 3, 6, 3), B), "skin", head, 0, cy, 0.005);
+  if (B.hair === "none") return;
+  const capH = h * ({ crop: 0.3, volume: 0.42, short: 0.16 }[B.hair] ?? 0.3), lift = B.hair === "volume" ? 0.02 : 0.006;
+  const capY = h / 2 - capH / 2 + lift;
+  add(sculpted(new THREE.BoxGeometry(w, capH, d, 3, 2, 3), B, capY, 0, 1.06), "hair", head, 0, cy + capY, 0.005);
+  if (B.hair !== "short") add(sculpted(new THREE.BoxGeometry(w, h * 0.5, d * 0.3, 3, 3, 1), B, h * 0.08, -d * 0.36, 1.06), "hair", head, 0, cy + h * 0.08, 0.005 - d * 0.36);
 }
 
 // ---------- Colours ----------

@@ -71,8 +71,9 @@ const SLIDERS = [
   ["legLen", "Leg length", 0.75, 1.2, 0.01], ["legR", "Leg thickness", 0.022, 0.07, 0.002], ["torsoH", "Torso height", 0.38, 0.66, 0.01],
   ["shoulderW", "Shoulder width", 0.28, 0.56, 0.01], ["waistW", "Waist width", 0.12, 0.42, 0.01], ["depth", "Torso depth", 0.3, 0.8, 0.02],
   ["armLen", "Arm length", 0.42, 0.72, 0.01], ["armR", "Arm thickness", 0.018, 0.05, 0.001],
-  ["headH", "Head length", 0.18, 0.36, 0.005], ["headW", "Head width", 0.1, 0.2, 0.005], ["headD", "Head depth", 0.12, 0.22, 0.005], ["jaw", "Jaw taper", 0.6, 1, 0.01],
-  ["nose", "Nose", 0.4, 1.8, 0.05], ["chin", "Chin", 0, 1, 0.05], ["brow", "Brow", 0, 1, 0.05], ["cheek", "Cheekbones", 0, 1, 0.05], ["ears", "Ears", 0.5, 1.6, 0.05],
+  ["headH", "Head length", 0.18, 0.36, 0.005], ["headW", "Head width", 0.1, 0.2, 0.005], ["headD", "Head depth", 0.12, 0.24, 0.005],
+  ["jaw", "Jaw (narrow ↔ wide)", 0.55, 1.25, 0.01], ["crown", "Crown (flat ↔ domed)", 0, 1, 0.05], ["skull", "Back of skull", 0, 1, 0.05],
+  ["forehead", "Forehead slope", 0, 1, 0.05], ["chin", "Chin", 0, 1, 0.05],
 ];
 const BASE = [["idle", "Stand"], ["walk", "Walk"], ["sitDownStool", "Sit down"], ["sitStool", "On stool"], ["standUpStool", "Stand up"], ["sitChair", "On chair"]];
 const ARMS = [[null, "None"], ["holdCup", "Hold cup"], ["sip", "Sip"], ["umbrella", "Umbrella"], ["type", "Type"], ["pocket", "Pockets"], ["wave", "Wave"]];
