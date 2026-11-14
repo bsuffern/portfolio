@@ -274,9 +274,37 @@ What that means for the build:
   foreground shapes). On the server it renders at about 0.5–0.7 s per frame in software; it hasn't been measured on a
   real GPU or phone yet.
 
+- **Status:** liked as a style but not the one imagined (2026-11-14). It stays at `/proto/coffee/`.
+
+## The coffee shop in low poly (from 2026-11-14)
+
+Broden: "What I imagine is the cafe scene I described but in low poly ... layer everything properly so that the scene
+comes to life with animations."
+
+`/proto/lowpoly/` (`src/proto/lowpoly.njk`). The code is split one module per layer in
+`src/assets/js/proto/lowpoly/`:
+
+| Module | Holds |
+| --- | --- |
+| `palette.js` | every colour by name, and cached flat-shaded materials |
+| `build.js` | `Builder`: box, cyl, cone, ico, plane, tube into named layers; `jitter` for hand-made shapes; `merge(layer)` merges a layer by material (about 45 top-level objects in total) |
+| `layout.js` | the scene description: constants (window wall, stools, pendants, door, seat camera) and one function per layer: room, bar, window, furniture, props, cutaway, outsideNear, outsideFar |
+| `lights.js` | warm lights (three pendant spots with shadows plus spill, room fill, doorway glow, corner) and cold lights (sky, street lamps, shop windows, moon); dials scale each group |
+| `people.js` | low-poly person rig (hips, shoulders, knees; optional cup or umbrella), poses (walk, sit, sip), cars |
+| `life.js` | behaviour: customers enter → stool → sit and sip → leave; walkers outside; cars; the laptop person |
+| `effects.js` | rain (shader-animated lines), glass pane with drops sliding down a canvas texture, steam, post-processing (bloom → ACES tone mapping → grain, vignette, optional pixelation) |
+| `main.js` | renderer, fog, views (corner table / diorama with cutaway hidden), panel, loop |
+
+- **Look:** flat shading, ACES tone mapping, soft spotlight shadows under the pendants, bloom on bulbs and lit
+  windows, cold fog outside.
+- **Sliders:** warmth inside, cold outside, rain, how busy, time speed, glow, fog, pixel size, grain; shadows on/off.
+- **Speed:** on the server it renders at about 0.2–0.4 s per frame in software. It hasn't been measured on a real GPU
+  or phone.
+- **Status:** first look sent to Broden.
+
 ## Next
 
-1. Broden's reaction to the coffee shop: framing, how busy it is, the people, the look.
+1. Broden's reaction to the low-poly coffee shop.
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
