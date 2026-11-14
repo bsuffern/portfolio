@@ -238,9 +238,45 @@ What that means for the build:
 - **Technique:** the same as the splat café (scene as code → splats → voxel and palette snap), plus animated people
   built from splat body parts.
 
+### First build, 2026-11-14
+
+`/proto/coffee/` (`src/proto/coffee.njk`, `src/assets/js/proto/coffee.js`).
+
+- **Room:** about 6.8 × 6 m.
+  - **Window wall:** floor-to-ceiling glass with black steel mullions, and a wood bar along it with five stools and
+    three pendant lights.
+  - **Left wall:** a doorway to the (off-screen) counter, a menu board, and a shelf of cups. A tall plant stands in the
+    window corner.
+  - **Tables:** a middle table where someone works on a laptop, and my corner table in the foreground with a
+    steaming cup.
+- **Outside:**
+  - wet street, kerbs, cold street lamps and their shimmering reflections, bare trees;
+  - a row of buildings with cold and warm windows, a bakery and a corner store;
+  - a distant skyline, drizzle.
+- **Splat density follows distance from the seat:** surfaces are tiled, and each tile's density is 900/m² × (4 m ÷
+  distance)², with a per-splat size to match. Splats then land at an even size on screen, using about 300k splats where
+  a uniform density needed about 530k. People use a fixed density.
+- **Light:** baked per side of the glass. Inside gets warm pendants, a doorway glow and a warm fill. Outside gets cold
+  ambient, street lamps and shop windows, and inside light doesn't leak out. "Warmth inside" and "Cold outside" re-bake
+  it.
+- **People:** rigs of splat parts (torso, head with hair, arms, two-part legs, shoes; optional cup or umbrella).
+  Poses: walk cycle, sit, sip. Inside people are tinted warm and outside people cold.
+  - **Customers:** come in through the doorway with a coffee, walk to a free stool, turn to the window and sit, sip
+    now and then, stay 25–65 s, then leave the way they came. At most four sit at once, and two are already seated when
+    the page loads.
+  - **Outside:** walkers on both pavements, most with umbrellas.
+  - **Cars:** pass both ways with headlights and tail lights.
+- **Views:** "Corner table" (the intended view, small look-around) and "Diorama" (orbit; ceiling and right wall cut
+  away). Tap to scatter.
+- **Sliders:** voxel snap 2cm, splat size 1.7×, square↔round 35%, palette snap 100%, dither 12%, pixel 2px, warmth
+  1×, cold 1×, rain 60%, how busy 1×, time speed 1×.
+- **Status:** first look sent to Broden. The corner-table view still reads rough up close (blotchy ceiling, dark
+  foreground shapes). On the server it renders at about 0.5–0.7 s per frame in software; it hasn't been measured on a
+  real GPU or phone yet.
+
 ## Next
 
-1. Build `/proto/coffee/` and tune it with Broden.
+1. Broden's reaction to the coffee shop: framing, how busy it is, the people, the look.
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
