@@ -328,6 +328,13 @@ person with just coloured mesh and we can then do layering of clothing later."
 - **Character lab:** `/proto/people/` (`lowpoly/lab.js`). Five people with body sliders, and buttons for every clip
   and layer. Views: front, side or turning. Speed control, shuffle colours, and "Copy body" (JSON to paste into
   `BODY`).
+- **Feedback 2026-11-14:** "Too uniform a model. And the head is round, I want a long rectangular head."
+  - **Head:** now a long rectangular block (`headW` 0.15, `headH` 0.27, `headD` 0.17), narrower at the jaw
+    (`jaw` 0.86), with blocky hair over the top and back.
+  - **Variety:** `varyBody(base, amount, rand)` gives each person their own height (±12%), build (±22%), waist, limb
+    thickness, head size and shape, a slight posture (spine lean, head tilt; the animator adds it on top of every
+    pose) and walking pace (±10%). The lab has a "Variety between people" slider (default 85%) and "New people" to
+    reroll. Each slot keeps its own seed, so body sliders reshape everyone without reshuffling who is who.
 - **Not yet:** clothing layers (later, by Broden's call). The café's `life.js` still uses the older `people.js` rig;
   it switches to `person.js` + `Animator` once the body is settled.
 

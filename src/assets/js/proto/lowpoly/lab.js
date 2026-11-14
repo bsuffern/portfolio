@@ -1,7 +1,7 @@
 // Character lab: a lineup of the shared person model to tune its proportions and try every animation clip.
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createPerson, BODY, PRESETS, randomColors } from "./person.js";
+import { createPerson, BODY, PRESETS, randomColors, varyBody } from "./person.js";
 import { Animator } from "./anim.js";
 
 const stage = document.querySelector("[data-proto-stage]");
@@ -33,7 +33,10 @@ const SLOTS = [-1.6, -0.8, 0, 0.8, 1.6];
 const body = { ...BODY };
 let colors = PRESETS.map((c) => ({ ...c }));
 let people = [];
-const state = { base: "idle", arms: null, head: null, speed: 1, facing: "turn" };
+const state = { base: "idle", arms: null, head: null, speed: 1, facing: "turn", variety: 0.85 };
+// Each slot keeps its own random draws, so sliders reshape everyone without reshuffling who is who.
+let seeds = SLOTS.map(() => Math.random() * 1e9);
+const seeded = (s) => () => ((s = (s * 16807) % 2147483647) - 1) / 2147483646;
 const furniture = new THREE.Group(); scene.add(furniture);
 const wood = new THREE.MeshStandardMaterial({ color: "#b47a46", flatShading: true }), metal = new THREE.MeshStandardMaterial({ color: "#25272c", flatShading: true });
 function seat(x, kind) {
@@ -47,7 +50,7 @@ function seat(x, kind) {
 function rebuild() {
   for (const p of people) { scene.remove(p.root); p.dispose(); }
   people = SLOTS.map((x, i) => {
-    const p = createPerson({ ...colors[i] }, body);
+    const p = createPerson({ ...colors[i] }, varyBody(body, state.variety, seeded(Math.floor(seeds[i]) + 1)));
     p.root.position.x = x; scene.add(p.root);
     p.anim = new Animator(p);
     return p;
@@ -67,7 +70,8 @@ function rebuild() {
 const SLIDERS = [
   ["legLen", "Leg length", 0.75, 1.2, 0.01], ["legR", "Leg thickness", 0.022, 0.07, 0.002], ["torsoH", "Torso height", 0.38, 0.66, 0.01],
   ["shoulderW", "Shoulder width", 0.28, 0.56, 0.01], ["waistW", "Waist width", 0.12, 0.42, 0.01], ["depth", "Torso depth", 0.3, 0.8, 0.02],
-  ["armLen", "Arm length", 0.42, 0.72, 0.01], ["armR", "Arm thickness", 0.018, 0.05, 0.001], ["headR", "Head size", 0.08, 0.14, 0.002],
+  ["armLen", "Arm length", 0.42, 0.72, 0.01], ["armR", "Arm thickness", 0.018, 0.05, 0.001],
+  ["headH", "Head length", 0.18, 0.36, 0.005], ["headW", "Head width", 0.1, 0.2, 0.005], ["headD", "Head depth", 0.12, 0.22, 0.005], ["jaw", "Jaw taper", 0.6, 1, 0.01],
 ];
 const BASE = [["idle", "Stand"], ["walk", "Walk"], ["sitDownStool", "Sit down"], ["sitStool", "On stool"], ["standUpStool", "Stand up"], ["sitChair", "On chair"]];
 const ARMS = [[null, "None"], ["holdCup", "Hold cup"], ["sip", "Sip"], ["umbrella", "Umbrella"], ["type", "Type"], ["pocket", "Pockets"], ["wave", "Wave"]];
@@ -76,11 +80,12 @@ const FACING = [["front", "Front"], ["side", "Side"], ["turn", "Turn"]];
 const body$ = document.getElementById("proto-panel-body");
 const seg = (group, items) => `<div class="pp-grid" role="group" aria-label="${group}">${items.map(([v, l]) => `<button type="button" data-${group}="${v ?? ""}">${l}</button>`).join("")}</div>`;
 body$.innerHTML =
-  `<p class="pp-h">Body</p>` + SLIDERS.map(([k, l, mn, mx, st]) => `<div class="pp-row"><label for="pp-${k}">${l}<output id="ppo-${k}">${body[k].toFixed(3)}</output></label><input type="range" id="pp-${k}" min="${mn}" max="${mx}" step="${st}" value="${body[k]}"></div>`).join("") +
+  `<p class="pp-h">Body</p><div class="pp-row"><label for="pp-variety">Variety between people<output id="ppo-variety">85%</output></label><input type="range" id="pp-variety" min="0" max="1" step="0.05" value="0.85"></div>` + SLIDERS.map(([k, l, mn, mx, st]) => `<div class="pp-row"><label for="pp-${k}">${l}<output id="ppo-${k}">${body[k].toFixed(3)}</output></label><input type="range" id="pp-${k}" min="${mn}" max="${mx}" step="${st}" value="${body[k]}"></div>`).join("") +
   `<p class="pp-h">Body animation</p>${seg("base", BASE)}<p class="pp-h">Arms</p>${seg("arms", ARMS)}<p class="pp-h">Head</p>${seg("head", HEAD)}` +
   `<p class="pp-h">View</p>${seg("facing", FACING)}` +
   `<div class="pp-row"><label for="pp-speed">Speed<output id="ppo-speed">1.00×</output></label><input type="range" id="pp-speed" min="0.1" max="2" step="0.05" value="1"></div>` +
-  `<div class="pp-grid pp-grid-2"><button type="button" class="pp-btn" id="pp-colours">Shuffle colours</button><button type="button" class="pp-btn" id="pp-copy">Copy body</button></div>`;
+  `<div class="pp-grid pp-grid-2"><button type="button" class="pp-btn" id="pp-new">New people</button><button type="button" class="pp-btn" id="pp-colours">Shuffle colours</button></div><button type="button" class="pp-btn" id="pp-copy">Copy body</button>`;
+document.getElementById("pp-variety").addEventListener("input", (e) => { state.variety = parseFloat(e.target.value); document.getElementById("ppo-variety").textContent = Math.round(state.variety * 100) + "%"; rebuild(); });
 for (const [k] of SLIDERS) {
   const el = document.getElementById("pp-" + k);
   el.addEventListener("input", () => { body[k] = parseFloat(el.value); document.getElementById("ppo-" + k).textContent = body[k].toFixed(3); rebuild(); });
@@ -106,9 +111,10 @@ body$.addEventListener("click", (e) => {
     state.head = b.dataset.head || null;
     for (const p of people) state.head ? p.anim.play("head", state.head) : p.anim.stop("head");
   } else if (b.dataset.facing !== undefined) state.facing = b.dataset.facing;
+  else if (b.id === "pp-new") { seeds = SLOTS.map(() => Math.random() * 1e9); colors = SLOTS.map(() => randomColors()); rebuild(); }
   else if (b.id === "pp-colours") { colors = SLOTS.map(() => randomColors()); people.forEach((p, i) => Object.entries(colors[i]).forEach(([slot, c]) => p.paint(slot, c))); }
   else if (b.id === "pp-copy") {
-    const text = JSON.stringify(Object.fromEntries(SLIDERS.map(([k]) => [k, +body[k].toFixed(3)])));
+    const text = JSON.stringify({ ...Object.fromEntries(SLIDERS.map(([k]) => [k, +body[k].toFixed(3)])), variety: state.variety });
     navigator.clipboard.writeText(text).then(() => (b.textContent = "Copied"), () => { b.textContent = "See console"; console.log(text); });
     setTimeout(() => (b.textContent = "Copy body"), 1500);
   }

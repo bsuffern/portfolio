@@ -70,7 +70,7 @@ function sample(clip, t) {
 
 export class Animator {
   constructor(person) {
-    this.p = person; this.clips = clips(person.body); this.layers = {}; this.speed = 1;
+    this.p = person; this.clips = clips(person.body); this.layers = {}; this.speed = person.body.pace || 1;
     this.joints = Object.keys(person.J).filter((j) => j !== "hips");
     this.shown = {}; // the pose on screen last frame; every change blends from here
   }
@@ -105,8 +105,8 @@ export class Animator {
       if (!lp && L.f >= 1) { delete this.layers[layer]; continue; }
       for (const j of L.joints) pose[j] = lerp3(L.from[j] || pose[j], lp ? lp[j] || ZERO : pose[j], f);
     }
-    const J = this.p.J;
-    for (const j of this.joints) J[j].rotation.set(...pose[j]);
+    const J = this.p.J, post = this.p.body.posture || {};
+    for (const j of this.joints) { const v = pose[j], o = post[j]; J[j].rotation.set(v[0] + (o?.[0] || 0), v[1] + (o?.[1] || 0), v[2] + (o?.[2] || 0)); }
     J.hips.position.y = this.p.body.legLen + pose.hipsY;
     this.shown = pose;
     // Keep held props upright whatever the arm is doing.

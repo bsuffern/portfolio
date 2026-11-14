@@ -20,8 +20,27 @@ export const BODY = {
   depth: 0.5,       // torso depth relative to its width
   armLen: 0.58,
   armR: 0.032,
-  headR: 0.105,
+  headW: 0.15,      // the head is a long rectangle: width,
+  headH: 0.27,      // height,
+  headD: 0.17,      // depth,
+  jaw: 0.86,        // and a slightly narrower jaw (bottom width as a fraction of the top)
 };
+
+// Every person shares the style but gets their own body: taller or shorter, broader or slighter, a longer or wider
+// head, and a slight posture of their own. amount 0 = all identical, 1 = full variety.
+export function varyBody(base = BODY, amount = 0.6, r = rand) {
+  const v = (spread) => 1 + (r() * 2 - 1) * spread * amount;
+  const height = v(0.12), build = v(0.22);
+  return {
+    ...base,
+    legLen: base.legLen * height * v(0.03), torsoH: base.torsoH * height * v(0.05), armLen: base.armLen * height * v(0.03),
+    shoulderW: base.shoulderW * build * v(0.06), waistW: base.waistW * build * v(0.2), depth: base.depth * v(0.12),
+    legR: base.legR * build * v(0.15), armR: base.armR * build * v(0.12),
+    headW: base.headW * v(0.12), headH: base.headH * v(0.15), headD: base.headD * v(0.08), jaw: Math.min(1, base.jaw * v(0.1)),
+    posture: { spine: [(r() - 0.4) * 0.12 * amount, 0, (r() - 0.5) * 0.04 * amount], neck: [(r() - 0.5) * 0.18 * amount, 0, (r() - 0.5) * 0.08 * amount] },
+    pace: v(0.1),
+  };
+}
 
 export function createPerson(colors = randomColors(), body = {}) {
   const B = { ...BODY, ...body }, C = colors;
@@ -47,9 +66,13 @@ export function createPerson(colors = randomColors(), body = {}) {
   joint("neck", J.spine, 0, B.torsoH, 0);
   add(limb(0.03, 0.034, 0.07), "skin", J.neck, 0, 0.07, 0);
   joint("head", J.neck, 0, 0.07, 0);
-  add(new THREE.IcosahedronGeometry(B.headR, 1), "skin", J.head, 0, B.headR * 0.95, 0, [0.92, 1.1, 1]);
-  const hairCap = add(new THREE.SphereGeometry(B.headR * 1.07, 8, 4, 0, Math.PI * 2, 0, Math.PI * 0.52), "hair", J.head, 0, B.headR * 1.02, -0.008);
-  hairCap.rotation.x = -0.3;
+  // Head: a long rectangular block, a touch narrower at the jaw; hair is a blocky cap over the top and back.
+  const head = new THREE.BoxGeometry(B.headW, B.headH, B.headD), hp = head.attributes.position;
+  for (let i = 0; i < hp.count; i++) if (hp.getY(i) < 0) { hp.setX(i, hp.getX(i) * B.jaw); hp.setZ(i, hp.getZ(i) * (0.9 + 0.1 * B.jaw)); }
+  head.computeVertexNormals();
+  add(head, "skin", J.head, 0, B.headH / 2 - 0.01, 0.005);
+  add(new THREE.BoxGeometry(B.headW * 1.08, B.headH * 0.2, B.headD * 1.08), "hair", J.head, 0, B.headH * 0.92, -0.002);
+  add(new THREE.BoxGeometry(B.headW * 1.08, B.headH * 0.62, B.headD * 0.22), "hair", J.head, 0, B.headH * 0.62, -B.headD * 0.47);
 
   const upper = B.armLen * 0.52, fore = B.armLen * 0.48;
   for (const side of ["L", "R"]) {
