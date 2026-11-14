@@ -198,10 +198,33 @@ Why it fits: every part is tweakable (shapes, colours, density, grid size, palet
 3D-plus-shader route Broden liked (A Short Hike note) and the diorama Maybes on the moodboard (Gardens Between,
 Townscaper, Tiny Glade). The scene file itself becomes the "tool" for composing scenes layer by layer.
 
+### Splat prototype, 2026-11-14
+
+`/proto/splat/` (`src/proto/splat.njk`, `src/assets/js/proto/splat.js`). three.js 0.170 + OrbitControls via an
+import map.
+
+- **The scene is code** (`buildScene()`): `box`, `cyl`, `sphere`, `quad`, `stroke` and `arc` helpers, each with a colour
+  *role*. Role can be a function of position, for patterns such as lantern ribs, shoji lattice, the noren crest and
+  wet patches.
+  - **Café corner:** floor, back wall with a lattice-topped window, left wall, counter, stools, kettle, cup, vase with
+    a blossom branch, paper lantern, noren, shelf with jars, a plant.
+  - **Outside:** a street lamp, shop row with lit shoji, awning and lanterns, taller buildings, a telegraph pole and
+    wires, and a wet street with shimmering reflections, all on a floating island.
+- **Baking:** surfaces are sampled on a jittered grid at about 1700 splats/m², roughly 260k in total. Lighting (lantern,
+  street lamp, shop windows, ambient) is baked into the colours in toon bands, with woodgrain on wood.
+- **Shader:** voxel snap in the vertex shader. Splats run from square to round. Each colour snaps to the active
+  palette (OKLab) with an ordered dither. The scene renders at 1/pixel size.
+- **Extra layers:** soft additive glows, rain as falling pixel streaks, steam that fades by screen-door dither.
+- **Tap to scatter:** the scene bursts into its splats and flies home. This also plays once on load.
+- **Views:** Diorama (slow auto-orbit, drag to rotate) and Seat (inside looking out, small look-around).
+- **Palettes:** the four from the woodblock prototype (keys 1–4).
+- **Sliders:** voxel snap 3cm, splat size 1.4×, square↔round 30%, palette snap 100%, dither 30%, pixel size 2px,
+  lamp warmth 0.75×, rain 60%.
+- **Status:** waiting for Broden's reaction. Unknown yet: performance on a phone with about 260k points.
+
 ## Next
 
-1. Prototype the café as a splat diorama with live dials (voxel size, splat size and shape, palette, dither, pixel
-   size), the four woodblock palettes, a "seat" view (inside looking out) and an orbiting diorama view.
+1. Tune the splat café with Broden (look, density, what's in the scene); check it on his phone.
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
