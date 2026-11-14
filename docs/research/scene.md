@@ -302,9 +302,39 @@ comes to life with animations."
   or phone.
 - **Status:** first look sent to Broden.
 
+- **Status:** Broden wants to tune the people first (2026-11-14).
+
+## People (from 2026-11-14)
+
+Broden: "create a common person 3d model that we can then layer with color or clothes but they will all have the same
+distinct shape ... long thin legs and then I want their torso almost like a triangle with proportionate arms. We then
+need to be able to setup a way to animate them easily." Then: "I don't mean triangle torso literally. Let's nail the
+person with just coloured mesh and we can then do layering of clothing later."
+
+- **`lowpoly/person.js`:** one shared body, `createPerson(colors, body)`. Proportions live in `BODY` (leg length and
+  thickness, torso height, shoulder and waist width, torso depth, arm length and thickness, head size).
+  - **Shape:** long thin legs (hips at 0.98 m), a six-sided torso tapering from 0.42 m shoulders to a 0.24 m waist,
+    jointed arms, a low-poly head with a hair cap.
+  - **Colour slots:** skin, hair, top, bottom, shoes. `paint(slot, colour)` recolours without rebuilding.
+  - **Props:** a cup and an umbrella hang off the right hand (`show(name)`); the animator keeps them upright.
+  - **Joints:** hips → spine → neck → head; shoulders → elbows → hands; hips → knees.
+- **`lowpoly/anim.js`:** a pose is `{ joint: [rx, ry, rz], hipsY }`, and a clip is key poses on a timeline (eased).
+  - **Animator layers:** `base` (whole body), `arms` and `head`. Each overlay only touches its joints. Every change
+    crossfades from the pose currently on screen. One-shots can chain: `play("arms", "sip", { then: "holdCup" })`.
+  - **Base clips:** idle, walk, sitStool, sitChair, sitDownStool, standUpStool.
+  - **Arm clips:** holdCup, sip, umbrella, type, pocket, wave.
+  - **Head clips:** lookAround, lookOutside.
+  - Sitting poses are built from leg length, so they still land on the seat when proportions change.
+- **Character lab:** `/proto/people/` (`lowpoly/lab.js`). Five people with body sliders, and buttons for every clip
+  and layer. Views: front, side or turning. Speed control, shuffle colours, and "Copy body" (JSON to paste into
+  `BODY`).
+- **Not yet:** clothing layers (later, by Broden's call). The café's `life.js` still uses the older `people.js` rig;
+  it switches to `person.js` + `Animator` once the body is settled.
+
 ## Next
 
-1. Broden's reaction to the low-poly coffee shop.
+1. Broden tunes the body in the character lab.
+2. Switch the café to the shared person model and animator.
 2. Pick the look, then generate clean outside and inside plates.
 3. Build the composer: plates plus code-animated effects.
 2. Then design how scenes are built layer by layer, and the tool for composing them.
